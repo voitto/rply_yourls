@@ -45,6 +45,7 @@ if (is_admin()) {   // TODO: optimize? unneeded loadings depending on pages
 	add_filter( 'ozh_adminmenu_icon_ozh_yourls', 'wp_ozh_yourls_customicon' );
 }
 
+
 // Get or create the short URL for a post. Input integer (post id), output string(url)
 function wp_ozh_yourls_geturl( $id ) {
 	$short = get_post_meta( $id, 'yourls_shorturl', true );
@@ -83,3 +84,71 @@ function wp_ozh_yourls_raw_url( $echo = false ) {
 		return $short;
 	}
 }
+
+
+
+
+
+add_shortcode('rssLike', 'rsslike_button');
+
+add_action('wp_meta', 'rsslike_rss2_like_feed');
+add_action('admin_menu', 'rsslike_admin_menu');
+
+function rsslike_rss2_like_feed() {
+	echo '<li><a href="'.get_option( 'likes_rss' ).'">Likes RSS</a></li>';
+}
+
+function rsslike_admin_menu() {
+	add_options_page(
+		'rssLike', // page title
+		'rssLike', // sub-menu title
+		'manage_options', // access/capa
+		'plugin.php', // file
+		'rsslike_settings_page' // function
+	);
+	add_action( 'admin_init', 'register_mysettings' );
+}
+
+
+function register_mysettings() {
+	register_setting( 'rsslike-settings-group', 'likes_rss' );
+	register_setting( 'rsslike-settings-group', 'likes_url' );
+	register_setting( 'rsslike-settings-group', 'likes_openappstore' );
+}
+
+
+function rsslike_button() {
+	return '<iframe src="'.get_option( 'likes_url' ).'/?url='.urlencode(get_permalink()).'&apps='.urlencode(get_option( 'likes_openappstore' )).'" scrolling="no" allowTransparency="true" frameborder="0" style="overflow:hidden;border:none;"></iframe>';
+}
+
+function rsslike_settings_page() {
+?>
+
+<div class="wrap">
+
+<h2>rssLike Settings</h2>
+
+<form method="post" action="options.php">
+    <?php settings_fields( 'rsslike-settings-group' ); ?>
+    <table class="form-table">
+	      <tr valign="top">
+	        <th scope="row">iFrame URL</th>
+	        <td><input size="70" type="text" name="likes_url" value="<?php echo get_option('likes_url'); ?>" /></td>
+	      </tr>
+	      <tr valign="top">
+	        <th scope="row">RSS URL</th>
+	        <td><input size="70" type="text" name="likes_rss" value="<?php echo get_option('likes_rss'); ?>" /></td>
+	      </tr>
+	      <tr valign="top">
+	        <th scope="row">Apps</th>
+	        <td><input size="40" type="text" name="likes_openappstore" value="<?php echo get_option('likes_openappstore'); ?>" /></td>
+	      </tr>
+    </table>
+    
+    <p class="submit">
+    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+    </p>
+
+</form>
+</div>
+<?php } ?>
