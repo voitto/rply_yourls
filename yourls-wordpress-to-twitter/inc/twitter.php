@@ -16,7 +16,7 @@ function wp_ozh_yourls_tweet_it($username, $password, $message){
 		}
   } else {
     $api_url = 'http://twitter.com/statuses/update.json';
-	  $body =    array( 'status'=>$message );
+	  $body =    array( 'status'=>$message, 'face_it'=>1, 'tweet_it'=>1, 'buzz_it'=>1 );
 	  $headers = array( 'Authorization' => 'Basic '.base64_encode("$username:$password") );
   }
 
