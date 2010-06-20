@@ -103,7 +103,7 @@ function rsslike_admin_menu() {
 		'rssLike', // page title
 		'rssLike', // sub-menu title
 		'manage_options', // access/capa
-		'plugin.php', // file
+		'rssLike.php', // file
 		'rsslike_settings_page' // function
 	);
 	add_action( 'admin_init', 'register_mysettings' );
